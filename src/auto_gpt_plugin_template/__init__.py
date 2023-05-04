@@ -6,22 +6,23 @@ from abstract_singleton import AbstractSingleton, Singleton
 
 PromptGenerator = TypeVar("PromptGenerator")
 
+from .get_user_input import get_user_input
 
 class Message(TypedDict):
     role: str
     content: str
 
 
-class AutoGPTPluginTemplate(AbstractSingleton, metaclass=Singleton):
+class AutoGPTUserInput(AbstractSingleton, metaclass=Singleton):
     """
-    This is a template for Auto-GPT plugins.
+    This is a plugin which simply allows AutoGPT to specifically request user input
     """
 
     def __init__(self):
         super().__init__()
-        self._name = "Auto-GPT-Plugin-Template"
+        self._name = "Auto-GPT-User-Input"
         self._version = "0.1.0"
-        self._description = "This is a template for Auto-GPT plugins."
+        self._description = "This is a plugin which simply allows AutoGPT to specifically request user input"
 
     @abc.abstractmethod
     def can_handle_on_response(self) -> bool:
@@ -48,16 +49,12 @@ class AutoGPTPluginTemplate(AbstractSingleton, metaclass=Singleton):
 
     @abc.abstractmethod
     def post_prompt(self, prompt: PromptGenerator) -> PromptGenerator:
-        """This method is called just after the generate_prompt is called,
-            but actually before the prompt is generated.
-
-        Args:
-            prompt (PromptGenerator): The prompt generator.
-
-        Returns:
-            PromptGenerator: The prompt generator.
-        """
-        pass
+        prompt.add_command(
+            "user_input",
+            "Request user input",
+            {"question_for_user": "<question>"},
+            get_user_input,
+        )
 
     @abc.abstractmethod
     def can_handle_on_planning(self) -> bool:
