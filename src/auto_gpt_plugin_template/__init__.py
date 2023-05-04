@@ -55,6 +55,7 @@ class AutoGPTUserInput(AbstractSingleton, metaclass=Singleton):
             {"question_for_user": "<question>"},
             get_user_input,
         )
+        return prompt
 
     @abc.abstractmethod
     def can_handle_on_planning(self) -> bool:
